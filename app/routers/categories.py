@@ -1,6 +1,10 @@
-from fastapi import APIRouter, HTTPException, status
+from fastapi import APIRouter, HTTPException, status, Depends
 from typing import List
 from ..schemas import Category
+from sqlalchemy.orm import Session
+from .. import models, schemas
+from ..database import get_db
+
 
 router = APIRouter(
     prefix="/categories",
@@ -14,17 +18,17 @@ category_id = 1
 # =========================
 # CREATE
 # =========================
-@router.post("/", status_code=status.HTTP_201_CREATED)
-def create_category(category: Category):
-    global category_id
+@router.post("/", response_model=schemas.CategoryResponse)
+def create_category(category: schemas.CategoryCreate, db: Session = Depends(get_db)):
+    new_category = models.Category(**category.dict())
+    db.add(new_category)
+    db.commit()
+    db.refresh(new_category)
+    return new_category
 
-    cat_dict = category.dict()
-    cat_dict["id"] = category_id
-    category_id += 1
-
-    categories_db.append(cat_dict)
-    return cat_dict
-
+@router.get("/", response_model=List[schemas.CategoryResponse])
+def get_categories(db: Session = Depends(get_db)):
+    return db.query(models.Category).all()
 
 # =========================
 # READ ALL + PAGINATION

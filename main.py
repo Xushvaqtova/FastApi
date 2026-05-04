@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.routers import posts, category, todo
+from app.routers import posts, categories, todo
 
 app = FastAPI(
     title="Blog API",
