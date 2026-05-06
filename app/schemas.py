@@ -1,7 +1,20 @@
+
 from pydantic import BaseModel, EmailStr
 from typing import Optional
 from datetime import datetime
 
+# ... (avvalgi schemalar)
+
+# ─── TOKEN SCHEMAS ────────────────────────────
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
+
+class TokenData(BaseModel):
+    id: Optional[str] = None
+
+    
 class Category(BaseModel):
     name: str
     description: str
